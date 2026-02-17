@@ -96,6 +96,31 @@ document.querySelectorAll('.hero-stats, .service-card, .project-card, .about-con
     observer.observe(el);
 });
 
+// Toast notification helper
+function showToast({ type = 'success', title, text, timeout = 4000 } = {}) {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+
+    const iconEl = document.getElementById('toast-icon');
+    const titleEl = document.getElementById('toast-title');
+    const textEl = document.getElementById('toast-text');
+
+    toast.classList.remove('toast--success', 'toast--error');
+    toast.classList.add(type === 'error' ? 'toast--error' : 'toast--success');
+
+    if (iconEl) {
+        iconEl.textContent = type === 'error' ? '⚠️' : '✅';
+    }
+    if (titleEl && title) titleEl.textContent = title;
+    if (textEl && text) textEl.textContent = text;
+
+    toast.classList.add('toast--visible');
+
+    setTimeout(() => {
+        toast.classList.remove('toast--visible');
+    }, timeout);
+}
+
 // Form submission -> отправка на сервер Flask (локальный или Render)
 const contactForm = document.querySelector('.contact-form');
 if (contactForm) {
@@ -114,11 +139,19 @@ if (contactForm) {
             mode: 'no-cors' // чтобы не упереться в CORS, нам не нужно читать ответ
         })
             .then(() => {
-                alert('Спасибо за ваше сообщение! Мы свяжемся с вами в ближайшее время.');
+                showToast({
+                    type: 'success',
+                    title: 'Сообщение отправлено',
+                    text: 'Мы свяжемся с вами в ближайшее время.'
+                });
                 contactForm.reset();
             })
             .catch(() => {
-                alert('Произошла ошибка при отправке. Попробуйте позже.');
+                showToast({
+                    type: 'error',
+                    title: 'Ошибка',
+                    text: 'Произошла ошибка при отправке. Попробуйте позже.'
+                });
             });
     });
 }
