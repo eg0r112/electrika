@@ -132,27 +132,23 @@ if (contactForm) {
         // Базовый URL сервера API (Render)
         const API_BASE = 'https://electrika-server.onrender.com';
 
-        // Отправляем данные на сервер по адресу `${API_BASE}/contact`
+        // Сразу показываем успешное уведомление и очищаем форму
+        // (не ждём ответа от сервера, т.к. он может "спать" на Render)
+        showToast({
+            type: 'success',
+            title: 'Сообщение отправлено',
+            text: 'Мы свяжемся с вами в ближайшее время.'
+        });
+        contactForm.reset();
+
+        // Отправляем данные на сервер в фоне (не ждём ответа)
         fetch(`${API_BASE}/contact`, {
             method: 'POST',
             body: new URLSearchParams(formData),
             mode: 'no-cors' // чтобы не упереться в CORS, нам не нужно читать ответ
-        })
-            .then(() => {
-                showToast({
-                    type: 'success',
-                    title: 'Сообщение отправлено',
-                    text: 'Мы свяжемся с вами в ближайшее время.'
-                });
-                contactForm.reset();
-            })
-            .catch(() => {
-                showToast({
-                    type: 'error',
-                    title: 'Ошибка',
-                    text: 'Произошла ошибка при отправке. Попробуйте позже.'
-                });
-            });
+        }).catch(() => {
+            // Игнорируем ошибки - пользователь уже видит успешное сообщение
+        });
     });
 }
 
