@@ -96,7 +96,7 @@ document.querySelectorAll('.hero-stats, .service-card, .project-card, .about-con
     observer.observe(el);
 });
 
-// Form submission -> отправка на локальный сервер Flask
+// Form submission -> отправка на сервер Flask (локальный или Render)
 const contactForm = document.querySelector('.contact-form');
 if (contactForm) {
     contactForm.addEventListener('submit', (e) => {
@@ -104,8 +104,11 @@ if (contactForm) {
 
         const formData = new FormData(contactForm);
 
-        // Отправляем данные на сервер по адресу http://127.0.0.1:5000/contact
-        fetch('http://127.0.0.1:5000/contact', {
+        // Базовый URL сервера API (Render)
+        const API_BASE = 'https://electrika-server.onrender.com';
+
+        // Отправляем данные на сервер по адресу `${API_BASE}/contact`
+        fetch(`${API_BASE}/contact`, {
             method: 'POST',
             body: new URLSearchParams(formData),
             mode: 'no-cors' // чтобы не упереться в CORS, нам не нужно читать ответ
